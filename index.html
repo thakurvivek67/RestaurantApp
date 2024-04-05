@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+  <form id="formDetails">
+    <label for="price" id="p">Choose Price:</label>
+    <input type="number" id="price" name="price">
+
+    <label for="dish" id="d">Enter Dish Name:</label>
+    <input type="text" id="dish" name="dish">
+
+    <label for="table" id="t">Table:</label>
+    <select id="table">
+      <option value="table1">table 1</option>
+      <option value="table2">table 2</option>
+      <option value="table3">table 3</option>
+    </select>
+
+    <button type="button" id="submitBtn">Submit</button>
+  </form>
+  <ul id="userList">
+
+  </ul>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
