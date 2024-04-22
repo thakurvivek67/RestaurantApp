@@ -1,39 +1,67 @@
 document.getElementById("submitBtn").addEventListener("click", handleFormSubmit);
 
-function handleFormSubmit() {
+async function handleFormSubmit(event) {
+  event.preventDefault(); // Prevent default form submission behavior
+
   var price = document.getElementById("price").value;
   var dish = document.getElementById("dish").value;
-  var table = document.getElementById("table").value;
+  var table = document.getElementById("tableselect").value;
 
-  // Create data object to send to the API
   var data = {
     price: price,
     dish: dish,
-    table: table
+    table: table,
   };
 
-  axios
-    .post(
-      "https://crudcrud.com/api/7ed19572029446348f188e1b08f99029/restaurants", data)
-    .then((response) => {
-      console.log(response.data);
-      displayUserOnScreen(response.data);
-    })
-    .catch((error) => console.log(error));
+  try {
+    const response = await saveToCRUD(data);
+    console.log(response.data);
+    displayUserOnScreen(response.data);
+  } catch (error) {
+    console.log(error);
+  }
 
   // Clearing the input fields
   document.getElementById("price").value = "";
   document.getElementById("dish").value = "";
-  document.getElementById("table").value = "";
+  document.getElementById("tableselect").value = "";
+}
+
+async function saveToCRUD(data) {
+  try {
+    return await axios.post("https://crudcrud.com/api/514164f8bc4c45aaa9c30123cefedb6c/restaurants", data);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function deleteUserFromCRUD(id) {
+  try {
+    const response = await axios.delete(`https://crudcrud.com/api/514164f8bc4c45aaa9c30123cefedb6c/restaurants/${id}`);
+    console.log(response.data);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function updateUserInCRUD(id, newData) {
+  try {
+    const response = await axios.put(`https://crudcrud.com/api/514164f8bc4c45aaa9c30123cefedb6c/restaurants/${id}`, newData);
+    console.log(response.data);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function displayUserOnScreen(data) {
+
+  const table1 = document.getElementById('table1List');
+  const table2 = document.getElementById('table2List');
+  const table3 = document.getElementById('table3List');
+
   const userItem = document.createElement("li");
-  userItem.appendChild(
-    document.createTextNode(
-      `${data.price} - ${data.dish} - ${data.table}`
-    )
-  );
+  const userdata = document.createTextNode(`${data.dish} - ${data.price} - ${data.table}`);
+  userItem.appendChild(userdata);
 
   const deleteBtn = document.createElement("button");
   deleteBtn.appendChild(document.createTextNode("Delete"));
@@ -43,16 +71,31 @@ function displayUserOnScreen(data) {
   editBtn.appendChild(document.createTextNode("Edit"));
   userItem.appendChild(editBtn);
 
-  const userList = document.getElementById("userList");
-  userList.appendChild(userItem);
+  if (data.table === 'table1') {
+    table1.appendChild(userItem);
+  } else if (data.table === 'table2') {
+    table2.appendChild(userItem);
+  } else if (data.table === 'table3') {
+    table3.appendChild(userItem);
+  }
 
-  deleteBtn.addEventListener("click", function (event) {
-    userList.removeChild(userItem);
-    // No need to remove from local storage as it's not used in this code
+  deleteBtn.addEventListener("click", async function () {
+    try {
+      await deleteUserFromCRUD(data._id);
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (data.table === 'table1') {
+      table1.removeChild(userItem);
+    } else if (data.table === 'table2') {
+      table2.removeChild(userItem);
+    } else if (data.table === 'table3') {
+      table3.removeChild(userItem);
+    }
   });
 
-  editBtn.addEventListener("click", function (event) {
-    // Replace userItem text with an edit form
+  editBtn.addEventListener("click", function () {
     const editForm = document.createElement("form");
 
     const priceInput = document.createElement("input");
@@ -74,34 +117,37 @@ function displayUserOnScreen(data) {
     saveBtn.appendChild(document.createTextNode("Save"));
     editForm.appendChild(saveBtn);
 
-    // Replace userItem with editForm
-    userList.replaceChild(editForm, userItem);
+    if (data.table === 'table1') {
+      table1.replaceChild(editForm, userItem);
+    } else if (data.table === 'table2') {
+      table2.replaceChild(editForm, userItem);
+    } else if (data.table === 'table3') {
+      table3.replaceChild(editForm, userItem);
+    }
 
-    // Add event listener to handle form submission
-    editForm.addEventListener("submit", function (event) {
+    saveBtn.addEventListener("click", async function (event) {
       event.preventDefault();
 
-      // Get updated values from the edit form
       const updatedData = {
         price: priceInput.value,
         dish: dishInput.value,
-        table: tableInput.value
+        table: tableInput.value,
       };
 
-      // Update the item on the server using a PUT request
-      axios.put(
-          `https://crudcrud.com/api/7ed19572029446348f188e1b08f99029/restaurants/${data._id}`, updatedData)
-        .then(() => {
-          // Update the item on the screen
-          userItem.textContent = `${updatedData.price} - ${updatedData.dish} - ${updatedData.table}`;
+      try {
+        await updateUserInCRUD(data._id, updatedData);
+        displayUserOnScreen(updatedData);
+      } catch (error) {
+        console.log(error);
+      }
 
-          // Remove the edit form and show the user item again
-          userList.replaceChild(userItem, editForm);
-          userItem.appendChild(deleteBtn);
-          userItem.appendChild(editBtn);
-        })
-        .catch((error) => console.log(error));
+      if (data.table === 'table1') {
+        table1.removeChild(editForm);
+      } else if (data.table === 'table2') {
+        table2.removeChild(editForm);
+      } else if (data.table === 'table3') {
+        table3.removeChild(editForm);
+      }
     });
   });
 }
-

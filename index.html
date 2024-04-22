@@ -11,14 +11,14 @@
 
 <body>
   <form id="formDetails">
+    <label for="dish" id="d"> Dish Name:</label>
+    <input type="text" id="dish" name="dish">
+
     <label for="price" id="p">Choose Price:</label>
     <input type="number" id="price" name="price">
 
-    <label for="dish" id="d">Enter Dish Name:</label>
-    <input type="text" id="dish" name="dish">
-
-    <label for="table" id="t">Table:</label>
-    <select id="table">
+    <label for="tableselect" id="t">Table:</label>
+    <select id="tableselect">
       <option value="table1">table 1</option>
       <option value="table2">table 2</option>
       <option value="table3">table 3</option>
@@ -26,9 +26,19 @@
 
     <button type="button" id="submitBtn">Submit</button>
   </form>
-  <ul id="userList">
-
-  </ul>
+  <div>
+    <h3>Table 1</h3>
+    <ul id="table1List"></ul>
+  </div>
+  <div>
+    <h3>Table 2</h3>
+    <ul id="table2List"></ul>
+  </div>
+  <div>
+    <h3>Table 3</h3>
+    <ul id="table3List"></ul>
+  </div>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
   <script src="script.js"></script>
 </body>
